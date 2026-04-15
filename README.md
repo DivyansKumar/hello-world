@@ -24,7 +24,3 @@ ld -o hello hello.o -lSystem -syslibroot $(xcrun --show-sdk-path) -e _main
 ```
 Hello from raw assembly!
 ```
-
-## Difficulty: Easy
-
-This is a well-documented pattern, though macOS-specific syscall numbers and the `svc #0x80` trap are less commonly shown than their Linux equivalents.
