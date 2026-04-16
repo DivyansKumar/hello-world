@@ -1,26 +1,20 @@
-# Experiment : Hello World
+# AArch64 Architectural Study: Native macOS System Interfacing
 
-**Goal:** Can Claude produce a minimal working program in AArch64 assembly?
+A low-level exploration of the **ARMv8-A (AArch64)** architecture executing natively on **Apple Silicon (M3 SoC)**. This project demonstrates proficiency in the AArch64 instruction set, memory-page alignment, and the Darwin (macOS) kernel syscall interface.
 
-**Result:** Yes, first try. 23 lines, compiled and ran immediately.
+## 🎯 Technical Objectives
+* **Instruction Set Mastery:** Implementing a native "Hello World" using raw AArch64 assembly without standard C libraries.
+* **Kernel Interfacing:** Utilizing the `X16` register for Darwin-specific syscall numbering and `svc #0x80` for kernel traps.
+* **Memory Addressing:** Implementing the `ADRP` (Address Page) and `ADD` (Page Offset) sequence required for 64-bit PC-relative addressing.
 
-## What Claude Had to Get Right
+## 🔬 Architectural Key Findings
+Unlike AArch64 Linux, which typically uses the `X8` register for syscall numbers and `svc #0` for traps, this study identifies and implements the specific requirements for the **Apple M3/Darwin kernel**:
+* **Syscall Mapping:** `write` is mapped to syscall `#4` and `exit` to `#1`.
+* **Register Convention:** Leveraging 64-bit general-purpose registers (`X0-X2`) for argument passing to the kernel.
 
-- macOS uses `x16` for syscall numbers (not `x8` like Linux ARM64)
-- Kernel trap is `svc #0x80` (not `svc #0` like Linux)
-- Addresses must be loaded with a two-instruction `adrp`/`add` sequence (ARM64 can't encode a 64-bit address in one instruction)
-- The `write` syscall is `#4`, `exit` is `#1` on macOS
-
-## Build & Run
-
+## 🛠 Build & Execution
 ```bash
+# Assemble and Link using native macOS tools
 as -o hello.o hello.s
 ld -o hello hello.o -lSystem -syslibroot $(xcrun --show-sdk-path) -e _main
 ./hello
-```
-
-## Output
-
-```
-Hello from raw assembly!
-```
